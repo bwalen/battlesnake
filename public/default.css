@@ -1,0 +1,58 @@
+.square{
+  display: inline-table;
+  height:20px;
+  width:20px;
+  margin-top: -15px;
+  padding: 0px;
+}
+
+.green{
+  background-color: green;
+}
+
+.black{
+  background-color: black;
+}
+
+.red{
+  background-color: red;
+}
+
+.brown{
+  background-color: brown;
+}
+
+.yellow{
+  background-color: yellow;
+}
+
+.row{
+  margin:0px;
+  padding:0px;
+}
+
+h3{
+  margin-top:0px;
+  margin-bottom: 0px;
+}
+
+#game-board{
+  display:inline;
+  text-align: center;
+  min-width: 550px;
+  padding: 15px;
+}
+
+.center{
+  display:inline;
+  text-align: center;
+}
+
+.more-margin{
+  margin-top: 10px;
+}
+
+.panel{
+  overflow: hidden;
+  max-height:80%;
+}
