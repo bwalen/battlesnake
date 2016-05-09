@@ -19,16 +19,33 @@ var nextMoveB = [-1,0];
 var lastMoveA = [0,1];
 var lastMoveB = [0,1];
 var lost = false;
+var playerAId;
+var playerBId;
 var board = addApple(addSnake(createBoardArray()));
 var timer;
 
 io.on("connection", function(socket){
-  console.log("a user connected");
-  start();
+  io.emit("board", board);
+  if(playerAId){
+    playerBId = socket.id;
+    start();
+  }
+  else{
+    playerAId = socket.id;
+  }
+  socket.on("player move", function(msg){
+    if(socket.id == playerAId){
+      nextMoveA = msg;
+    }
+    if(socket.id == playerBId){
+      nextMoveB = msg;
+    }
+  })
+  console.log("user " + socket.id + " connected");
 })
 
 function start(){
-timer = setInterval(move, 10000);
+  timer = setInterval(move, 1000);
 }
 
 function addSnake(boardArray){
@@ -78,18 +95,30 @@ function move(){
   if(nextMoveA[0]==1){
     snakeA.push([currentPositionA[0]+1,currentPositionA[1]]);
   }
+  if(nextMoveB[0]==1){
+    snakeB.push([currentPositionB[0]+1,currentPositionB[1]]);
+  }
   if(nextMoveA[0]==-1){
     snakeA.push([currentPositionA[0]-1,currentPositionA[1]]);
+  }
+  if(nextMoveB[0]==-1){
+    snakeB.push([currentPositionB[0]-1,currentPositionB[1]]);
   }
   if(nextMoveA[1]==1){
     snakeA.push([currentPositionA[0], currentPositionA[1]+1]);
   }
+  if(nextMoveB[1]==1){
+    snakeB.push([currentPositionB[0], currentPositionB[1]+1]);
+  }
   if(nextMoveA[1]==-1){
     snakeA.push([currentPositionA[0],currentPositionA[1]-1]);
   }
+  if(nextMoveB[1]==-1){
+    snakeB.push([currentPositionB[0],currentPositionB[1]-1]);
+  }
   var newY = snakeA[snakeA.length-1][0];
   var newX = snakeA[snakeA.length-1][1];
-  if(board[newY][newX] == 0 || board[newY][newX] == 2){
+  if(board[newY][newX] == 0 || board[newY][newX] == 2 || board[newY][newX] == 4){
     lost = true;
     clearInterval(timer);
   }
@@ -102,7 +131,6 @@ function move(){
     board=addApple(addSnake(createBoardArray()));
   }
   io.emit("board", board);
-  console.log(board);
 }
 
 function createBoardArray(){

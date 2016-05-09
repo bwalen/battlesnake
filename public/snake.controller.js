@@ -39,13 +39,16 @@ function snake($http, $interval){
       socket.emit("player move", [0,-1]);
     }
     if(e.keyCode == 39 && vm.lastMove != "0,-1"){
-      vm.nextMove = [0,1];
+      vm.lastMove = [0,1];
+      socket.emit("player move", [0,1]);
     }
     if(e.keyCode == 38 && vm.lastMove != "1,0"){
-      vm.nextMove = [-1,0];
+      vm.lastMove = [-1,0];
+      socket.emit("player move", [-1,0]);
     }
     if(e.keyCode == 40 && vm.lastMove != "-1,0"){
-      vm.nextMove = [1,0];
+      vm.lastMove = [1,0];
+      socket.emit("player move", [1,0]);
     }
     console.log(e.keyCode);
   })
