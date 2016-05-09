@@ -50,7 +50,6 @@ function snake($http, $interval){
       vm.lastMove = [1,0];
       socket.emit("player move", [1,0]);
     }
-    console.log(e.keyCode);
   })
 
   vm.timer = $interval(function(){

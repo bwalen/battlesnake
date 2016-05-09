@@ -17,7 +17,7 @@ var apple = [11,12];
 var nextMoveA = [1,0];
 var nextMoveB = [-1,0];
 var lastMoveA = [0,1];
-var lastMoveB = [0,1];
+var lastMoveB = [0,-1];
 var lost = false;
 var playerAId;
 var playerBId;
@@ -26,7 +26,11 @@ var timer;
 
 io.on("connection", function(socket){
   io.emit("board", board);
-  if(playerAId){
+  if(playerAId && playerBId){
+    socket.emit("status", "spectate");
+  }
+  else if(playerAId){
+    socket.emit("status", "yellow");
     playerBId = socket.id;
     start();
   }
@@ -41,7 +45,6 @@ io.on("connection", function(socket){
       nextMoveB = msg;
     }
   })
-  console.log("user " + socket.id + " connected");
 })
 
 function start(){
@@ -118,18 +121,31 @@ function move(){
   }
   var newY = snakeA[snakeA.length-1][0];
   var newX = snakeA[snakeA.length-1][1];
+  var newB = snakeB[snakeB.length-1][0];
+  var newA = snakeB[snakeB.length-1][1];
   if(board[newY][newX] == 0 || board[newY][newX] == 2 || board[newY][newX] == 4){
     lost = true;
+    console.log("Player 2 wins");
     clearInterval(timer);
   }
   else if(board[newY][newX] == 3 ){
     apple = [-1,-1];
-    board=addApple(addSnake(createBoardArray()));
   }
   else{
     snakeA.splice(0,1);
-    board=addApple(addSnake(createBoardArray()));
   }
+  if(board[newB][newA] == 0 || board[newB][newA] == 2 || board[newB][newA] == 4){
+    lost = true;
+    console.log("Player 1 wins");
+    clearInterval(timer);
+  }
+  else if(board[newB][newA] == 3 ){
+    apple = [-1,-1];
+  }
+  else{
+    snakeB.splice(0,1);
+  }
+  board=addApple(addSnake(createBoardArray()));
   io.emit("board", board);
 }
 

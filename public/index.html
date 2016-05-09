@@ -7,13 +7,12 @@
   </head>
   <body id="body" ng-app="snake">
     <div ng-controller="snakeController as snake">
-
-              <div id="game-board">
-                <div ng-repeat="item in snake.board track by $index" class="row">
-                  <p ng-repeat="square in snake.board[$index] track by $index" class="square" ng-class="snake.color(square)"></p>
-                </div>
-              </div>
-
+    <div id="game-board">
+      <div ng-repeat="item in snake.board track by $index" class="row">
+        <p ng-repeat="square in snake.board[$index] track by $index" class="square" ng-class="snake.color(square)"></p>
+      </div>
+    </div>
+    <h3 class="center">You are the Red Snake</h3>
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.6/socket.io.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
