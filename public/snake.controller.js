@@ -17,6 +17,8 @@ function snake($http, $interval){
 
   socket.on("status", function(msg){
     vm.player = msg;
+    vm.nextMove = [1,0];
+    vm.lastMove = [-1,-1];
   })
 
   socket.on("win", function(msg){
@@ -62,5 +64,5 @@ function snake($http, $interval){
 
   vm.timer = $interval(function(){
     vm.board = incomingBoard;
-  }, 500);
+  }, 250);
 }
