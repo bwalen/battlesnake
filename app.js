@@ -47,7 +47,6 @@ io.on("connection", function(socket){
     }
   })
   socket.on("disconnect", function(){
-    console.log("disconnect");
     for(var i = 0; i < playerQueue.length; i++){
       if(playerQueue[i] == socket.id){
         playerQueue.splice(i,1);
@@ -78,7 +77,6 @@ function start(){
   else{
     io.to(playerQueue[0]).emit('status', 'You are the Red Snake.  Waiting for another player.');
   }
-  console.log(playerQueue);
 }
 
 function addSnake(boardArray){
