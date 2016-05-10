@@ -3,6 +3,7 @@ var app = express();
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
 var port = process.env.PORT || 1337;
+var _ = require("underscore");
 
 app.use(express.static("./public"));
 
@@ -13,28 +14,25 @@ http.listen(port, function(){
 var BOARDSIZE = 25;
 var snakeA = [[1,1],[2,1]];
 var snakeB = [[23,23],[22,23]];
-var apple = [12,12];
+var apple = [-1,-1];
 var nextMoveA = [1,0];
 var nextMoveB = [-1,0];
 var lastMoveA = [0,1];
 var lastMoveB = [0,-1];
 var lost = false;
 var playerQueue = [];
-var board = addApple(addSnake(createBoardArray()));
+var board = addSnake(createBoardArray());
 var timer;
 
 io.on("connection", function(socket){
-  playerQueue.push(socket.id);
   socket.emit("board", board);
-  if(playerQueue[0] && playerQueue[1]){
-    socket.emit("status", "spectate");
-  }
-  else if(playerQueue[0]){
-    socket.emit("status", "yelow");
+  if(_.isString(playerQueue[0])){
+    playerQueue.push(socket.id);
     start();
   }
   else{
-    socket.emit("status", "red");
+    playerQueue.push(socket.id);
+    socket.emit("status", "You are the Red Snake");
   }
   socket.on("player move", function(msg){
     if(socket.id == playerQueue[0]){
@@ -48,11 +46,9 @@ io.on("connection", function(socket){
     io.emit("disonnect");
     if(socket.id == playerQueue[0]){
       playerQueue.splice(1,1);
-      wins(playerQueue[1]);
     }
     else if(socket.id == playerQueue[1]){
       playerQueue.splice(0,1);
-      wins(playerQueue[0]);
     }
     else{
       for(var i = 0; i < playerQueue.length; i++){
@@ -65,7 +61,22 @@ io.on("connection", function(socket){
 })
 
 function start(){
-  timer = setInterval(move, 1000);
+  io.to(playerQueue[0]).emit('status', 'You are the Red Snake');
+  io.to(playerQueue[1]).emit('status', 'You are the Yellow Snake');
+  for(var i = 2; i < playerQueue.length; i++){
+    io.to(playerQueue[i]).emit('status', 'You are spectating.  You will play soon.');
+  }
+  clearInterval(timer);
+  io.emit("win", "");
+  snakeA = [[1,1],[2,1]];
+  snakeB = [[23,23],[22,23]];
+  apple = [-1,-1];
+  nextMoveA = [1,0];
+  nextMoveB = [-1,0];
+  lastMoveA = [0,1];
+  lastMoveB = [0,-1];
+  board = addApple(addSnake(createBoardArray()));
+  timer = setInterval(move, 1500);
 }
 
 function addSnake(boardArray){
@@ -141,9 +152,11 @@ function move(){
   var newB = snakeB[snakeB.length-1][0];
   var newA = snakeB[snakeB.length-1][1];
   if(board[newY][newX] == 0 || board[newY][newX] == 2 || board[newY][newX] == 4){
-    lost = true;
-    console.log("Player 2 wins");
+    io.emit("win", "Yellow player wins!");
+    playerQueue.push(playerQueue[0]);
+    playerQueue.splice(0,1);
     clearInterval(timer);
+    setTimeout(start, 5000);
   }
   else if(board[newY][newX] == 3 ){
     apple = [-1,-1];
@@ -152,9 +165,11 @@ function move(){
     snakeA.splice(0,1);
   }
   if(board[newB][newA] == 0 || board[newB][newA] == 2 || board[newB][newA] == 4){
-    lost = true;
-    console.log("Player 1 wins");
+    io.emit("win", "Red player wins!");
+    playerQueue.push(playerQueue[1]);
+    playerQueue.splice(1,1);
     clearInterval(timer);
+    setTimeout(start, 5000);
   }
   else if(board[newB][newA] == 3 ){
     apple = [-1,-1];
@@ -192,15 +207,4 @@ function createBoardRow(){
   }
   rowArray.push(0);
   return(rowArray);
-}
-
-function wins(){
-  snakeA = [[1,1],[2,1]];
-  snakeB = [[23,23],[22,23]];
-  apple = [12,12];
-  nextMoveA = [1,0];
-  nextMoveB = [-1,0];
-  lastMoveA = [0,1];
-  lastMoveB = [0,-1];
-  board = addApple(addSnake(createBoardArray()));
 }

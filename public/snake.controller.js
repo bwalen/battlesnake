@@ -15,6 +15,14 @@ function snake($http, $interval){
     incomingBoard = msg;
   })
 
+  socket.on("status", function(msg){
+    vm.player = msg;
+  })
+
+  socket.on("win", function(msg){
+    vm.win = msg;
+  })
+
   vm.color = function(color){
     if(color ==0){
       return "black";
@@ -54,5 +62,5 @@ function snake($http, $interval){
 
   vm.timer = $interval(function(){
     vm.board = incomingBoard;
-  }, 100);
+  }, 500);
 }

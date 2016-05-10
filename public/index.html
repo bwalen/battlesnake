@@ -11,8 +11,9 @@
       <div ng-repeat="item in snake.board track by $index" class="row">
         <p ng-repeat="square in snake.board[$index] track by $index" class="square" ng-class="snake.color(square)"></p>
       </div>
-    </div>
-    <h3 class="center">You are the Red Snake</h3>
+    </div><br>
+    <h1>{{snake.win}}</h1>
+    <h3>{{snake.player}}</h3>
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.6/socket.io.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
