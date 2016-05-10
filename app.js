@@ -13,36 +13,53 @@ http.listen(port, function(){
 var BOARDSIZE = 25;
 var snakeA = [[1,1],[2,1]];
 var snakeB = [[23,23],[22,23]];
-var apple = [11,12];
+var apple = [12,12];
 var nextMoveA = [1,0];
 var nextMoveB = [-1,0];
 var lastMoveA = [0,1];
 var lastMoveB = [0,-1];
 var lost = false;
-var playerAId;
-var playerBId;
+var playerQueue = [];
 var board = addApple(addSnake(createBoardArray()));
 var timer;
 
 io.on("connection", function(socket){
-  io.emit("board", board);
-  if(playerAId && playerBId){
+  playerQueue.push(socket.id);
+  socket.emit("board", board);
+  if(playerQueue[0] && playerQueue[1]){
     socket.emit("status", "spectate");
   }
-  else if(playerAId){
-    socket.emit("status", "yellow");
-    playerBId = socket.id;
+  else if(playerQueue[0]){
+    socket.emit("status", "yelow");
     start();
   }
   else{
-    playerAId = socket.id;
+    socket.emit("status", "red");
   }
   socket.on("player move", function(msg){
-    if(socket.id == playerAId){
+    if(socket.id == playerQueue[0]){
       nextMoveA = msg;
     }
-    if(socket.id == playerBId){
+    if(socket.id == playerQueue[1]){
       nextMoveB = msg;
+    }
+  })
+  socket.on("disconnect",function(){
+    io.emit("disonnect");
+    if(socket.id == playerQueue[0]){
+      playerQueue.splice(1,1);
+      wins(playerQueue[1]);
+    }
+    else if(socket.id == playerQueue[1]){
+      playerQueue.splice(0,1);
+      wins(playerQueue[0]);
+    }
+    else{
+      for(var i = 0; i < playerQueue.length; i++){
+        if(playerQueue[i] == socket.id){
+          playerQueue.splice(i,1);
+        }
+      }
     }
   })
 })
@@ -175,4 +192,15 @@ function createBoardRow(){
   }
   rowArray.push(0);
   return(rowArray);
+}
+
+function wins(){
+  snakeA = [[1,1],[2,1]];
+  snakeB = [[23,23],[22,23]];
+  apple = [12,12];
+  nextMoveA = [1,0];
+  nextMoveB = [-1,0];
+  lastMoveA = [0,1];
+  lastMoveB = [0,-1];
+  board = addApple(addSnake(createBoardArray()));
 }
