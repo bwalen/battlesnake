@@ -26,7 +26,10 @@ var timer;
 
 io.on("connection", function(socket){
   socket.emit("board", board);
-  if(_.isString(playerQueue[0])){
+  if(_.isString(playerQueue[0]) && _.isString(playerQueue[1])){
+    socket.emit("status", "You are spectating.  You will play soon.")
+  }
+  else if(_.isString(playerQueue[0])){
     playerQueue.push(socket.id);
     start();
   }
