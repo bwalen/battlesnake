@@ -62,6 +62,10 @@ function snake($http, $interval){
     }
   })
 
+  window.onbeforeunload = function (){
+    socket.emit("disconnect", "disconnect");
+  }
+  
   vm.timer = $interval(function(){
     vm.board = incomingBoard;
   }, 250);

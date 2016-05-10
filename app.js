@@ -46,19 +46,10 @@ io.on("connection", function(socket){
       nextMoveB = msg;
     }
   })
-  socket.on("disconnect",function(){
-    io.emit("disonnect");
-    if(socket.id == playerQueue[0]){
-      playerQueue.splice(1,1);
-    }
-    else if(socket.id == playerQueue[1]){
-      playerQueue.splice(0,1);
-    }
-    else{
-      for(var i = 0; i < playerQueue.length; i++){
-        if(playerQueue[i] == socket.id){
-          playerQueue.splice(i,1);
-        }
+  socket.on("disconnect", function(){
+    for(var i = 0; i < playerQueue.length; i++){
+      if(playerQueue[i] == socket.id){
+        playerQueue.splice(i,1);
       }
     }
   })
@@ -80,7 +71,12 @@ function start(){
   lastMoveA = [0,1];
   lastMoveB = [0,-1];
   board = addApple(addSnake(createBoardArray()));
-  timer = setInterval(move, 500);
+  if(_.isString(playerQueue[0]) && _.isString(playerQueue[1])){
+    timer = setInterval(move, 500);
+  }
+  else{
+    io.to(playerQueue[0]).emit('status', 'You are the Red Snake.  Waiting for another player.');
+  }
 }
 
 function addSnake(boardArray){
