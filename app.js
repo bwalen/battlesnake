@@ -36,7 +36,7 @@ io.on("connection", function(socket){
   }
   else{
     playerQueue.push(socket.id);
-    socket.emit("status", "You are the Red Snake");
+    socket.emit("status", "You are the Red Snake.  Waiting for another player.");
   }
   socket.on("player move", function(msg){
     if(socket.id == playerQueue[0]){
@@ -80,7 +80,7 @@ function start(){
   lastMoveA = [0,1];
   lastMoveB = [0,-1];
   board = addApple(addSnake(createBoardArray()));
-  timer = setInterval(move, 1500);
+  timer = setInterval(move, 500);
 }
 
 function addSnake(boardArray){
