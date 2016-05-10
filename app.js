@@ -28,6 +28,7 @@ io.on("connection", function(socket){
   socket.emit("board", board);
   if(_.isString(playerQueue[0]) && _.isString(playerQueue[1])){
     socket.emit("status", "You are spectating.  You will play soon.")
+    playerQueue.push(socket.id);
   }
   else if(_.isString(playerQueue[0])){
     playerQueue.push(socket.id);
