@@ -7,7 +7,7 @@
 }
 
 .green{
-  background-color: green;
+  background-image: url("gras.png");
 }
 
 .black{
@@ -15,7 +15,7 @@
 }
 
 .red{
-  background-color: red;
+  background-image:url("apple.jpg");
 }
 
 .brown{

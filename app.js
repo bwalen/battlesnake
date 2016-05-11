@@ -72,7 +72,7 @@ function start(){
   lastMoveB = [0,-1];
   board = addApple(addSnake(createBoardArray()));
   if(_.isString(playerQueue[0]) && _.isString(playerQueue[1])){
-    timer = setInterval(move, 500);
+    timer = setInterval(move, 300);
   }
   else{
     io.to(playerQueue[0]).emit('status', 'You are the Red Snake.  Waiting for another player.');
